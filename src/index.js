@@ -112,7 +112,9 @@ function onLoadMore() {
         );
         // lightbox.refresh();
       }
-      smoothScroll();
+      if (allImages && loadedImages >= 40) {
+        smoothScroll();
+      }
     })
     .catch(error => {
       console.error(error);
