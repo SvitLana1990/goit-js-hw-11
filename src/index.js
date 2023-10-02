@@ -1,31 +1,31 @@
 import axios from 'axios';
 import refs from './refs';
 import Notiflix from 'notiflix';
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const API_KEY = '39758797-2603f3af911ae2369cae9d72d';
 const BASE_URL = 'https://pixabay.com/api/';
 const { searchForm, input, button, container, loadButton, target } = refs;
-let search = null;
-let page = 1;
 const perPage = 40;
-const allImages = [];
-let totalHits = 0;
-let loadedImages = 0;
-let currentPage = 1;
-
-loadButton.classList.add('is-hidden');
-// loadButton.addEventListener('click', onLoadMore);
-searchForm.addEventListener('submit', handlerSubmit);
-
 const options = {
   root: null,
   rootMargin: '300px',
   threshold: 1.0,
 };
+// let search = null;
+let page = 1;
+let allImages = [];
+let totalHits = 0;
+let loadedImages = 0;
+let currentPage = 1;
+let search = null;
 
-let observer = new IntersectionObserver(callback, options);
+loadButton.classList.add('is-hidden');
+// loadButton.addEventListener('click', onLoadMore);
+searchForm.addEventListener('submit', handlerSubmit);
+
+const observer = new IntersectionObserver(callback, options);
 function callback(entries, observer) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -67,15 +67,14 @@ function handlerSubmit(event) {
         loadedImages = images.length;
         markupImage(images);
         if (loadedImages === totalHits) {
-          // loadButton.classList.add('is-hidden');
           Notiflix.Notify.warning(
             "We're sorry, but you've reached the end of search results."
           );
-        } else {
-          // loadButton.classList.remove('is-hidden');
         }
       }
-      Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+      if (loadedImages >= 1) {
+        Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+      }
     })
     .catch(error => {
       console.error(error);
@@ -104,15 +103,16 @@ function onLoadMore() {
 
       allImages.push(...images);
       markupImage(allImages);
-      // refresh();
-      smoothScroll();
+
       if (loadedImages >= totalHits) {
         // loadButton.classList.add('is-hidden');
         observer.unobserve(target);
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
+        // lightbox.refresh();
       }
+      smoothScroll();
     })
     .catch(error => {
       console.error(error);
@@ -130,7 +130,7 @@ function markupImage(images) {
       comments,
       downloads,
     }) => {
-      const html = `
+      const markup = `
       <div class="photo-card">
         <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" width=320/></a>
         <div class="info">
@@ -141,8 +141,7 @@ function markupImage(images) {
         </div>
       </div>
     `;
-
-      container.insertAdjacentHTML('beforeend', html);
+      container.insertAdjacentHTML('beforeend', markup);
       observer.observe(target);
     }
   );
@@ -166,4 +165,8 @@ function smoothScroll() {
 //   animationSlide: true,
 //   docClose: true,
 //   disableScroll: true,
+// });
+// const lightbox = new SimpleLightbox('.gallery a', {
+//   captionsData: 'alt',
+//   captionDelay: 250,
 // });
