@@ -68,7 +68,7 @@ async function handlerSubmit(event) {
     }
     if (loadedImages >= 1) {
       Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
-      SimpleLightbox = new SimpleLightbox('.gallery a', {
+      new SimpleLightbox('.gallery a', {
         captionsData: 'alt',
         captionDelay: 250,
       });
@@ -92,7 +92,7 @@ async function onLoadMore() {
 
     allImages.push(...images);
     markupImage(allImages);
-    SimpleLightbox = new SimpleLightbox('.gallery a', {
+    new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionDelay: 250,
     });
