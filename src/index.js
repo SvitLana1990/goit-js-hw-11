@@ -6,7 +6,6 @@ import { customfetch } from './custom_fetch';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 // const body = document.body;
-
 const { searchForm, input, button, container, loadButton, target } = refs;
 const perPage = 40;
 let page = 1;
@@ -60,7 +59,10 @@ async function handlerSubmit(event) {
       loadedImages = images.length;
       markupImage(images);
       loadButton.classList.remove('is-hidden');
+
       if (loadedImages === totalHits) {
+        loadButton.classList.add('is-hidden');
+
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
@@ -84,7 +86,6 @@ async function onLoadMore() {
   }
   search = input.value;
   page += 1;
-
   try {
     const responseData = await customfetch({ perPage, page, search });
     const images = responseData.hits;
