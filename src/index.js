@@ -5,7 +5,7 @@ import { markupImage } from './markup';
 import { customfetch } from './custom_fetch';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-// const body = document.body;
+
 const { searchForm, input, button, container, loadButton, target } = refs;
 const perPage = 40;
 let page = 1;
@@ -13,28 +13,25 @@ let allImages = [];
 let totalHits = 0;
 let loadedImages = 0;
 let search = null;
+let isLoadingMore = false;
 
 loadButton.classList.add('is-hidden');
-loadButton.addEventListener('click', onLoadMore);
+// loadButton.addEventListener('click', onLoadMore);
+
 searchForm.addEventListener('submit', handlerSubmit);
 
-// console.log(window);
-// window.addEventListener('scroll', async () => {
-//   const scrollTop = body.scrollTop || document.documentElement.scrollTop;
-//   const scrollHeight =
-//     body.scrollHeight || document.documentElement.scrollHeight;
-//   const clientHeight =
-//     body.clientHeight || document.documentElement.clientHeight;
-//   console.log(
-//     'body.scrollTop, body.clientHeight, body.scrollHeight',
-//     scrollTop,
-//     clientHeight,
-//     scrollHeight
-//   );
-//   if (scrollTop + clientHeight === scrollHeight) {
-//     await onLoadMore();
-//   }
-// });
+window.addEventListener('scroll', async () => {
+  const { scrollHeight, clientHeight, scrollTop } = document.documentElement;
+  if (
+    scrollTop + clientHeight > scrollHeight - 10 &&
+    page * perPage < totalHits &&
+    !isLoadingMore
+  ) {
+    isLoadingMore = true;
+    await onLoadMore();
+    isLoadingMore = false;
+  }
+});
 
 async function handlerSubmit(event) {
   event.preventDefault();
@@ -58,11 +55,9 @@ async function handlerSubmit(event) {
       allImages.length = 0;
       loadedImages = images.length;
       markupImage(images);
-      loadButton.classList.remove('is-hidden');
-
+      // loadButton.classList.remove('is-hidden');
       if (loadedImages === totalHits) {
-        loadButton.classList.add('is-hidden');
-
+        // loadButton.classList.add('is-hidden');
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
@@ -98,7 +93,7 @@ async function onLoadMore() {
       captionDelay: 250,
     });
     if (loadedImages >= totalHits) {
-      loadButton.classList.add('is-hidden');
+      // loadButton.classList.add('is-hidden');
       Notiflix.Notify.warning(
         "We're sorry, but you've reached the end of search results."
       );
